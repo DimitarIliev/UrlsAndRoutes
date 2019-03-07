@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Extensions.DependencyInjection;
+using UrlsAndRoutes.Infrastructure;
 
 namespace UrlsAndRoutes
 {
@@ -15,6 +18,7 @@ namespace UrlsAndRoutes
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<RouteOptions>(options => options.ConstraintMap.Add("weekday", typeof(WeekDayConstraint)));
             services.AddMvc();
         }
 
@@ -24,24 +28,51 @@ namespace UrlsAndRoutes
             app.UseStatusCodePages();
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
-            app.UseMvc(routes => {
-                routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}");//, defaults: new { action = "Index" });
-                // example route for prefixed Urls
-                // routes.MapRoute("Public/{controller=Home}/{action=Index}");
-                // url patter that has both static and variable elements
-                // routes.MapRoute("", "X{controller}/{action});
+            app.UseMvcWithDefaultRoute();
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}");//, defaults: new { action = "Index" });
+            //    Constraints
+            //    routes.MapRoute(name: "MyRoute", template: "{controller}/{action}/{id?}", defaults: new { controller = "Home", action = "Index" }, constraints: new { id = new IntRouteConstraint() });
+            //    regex
+            //    routes.MapRoute(name: "MyRoute", template: "{controller:regex(^H.*)=Home}/{action=Index}/{id?}");
+            //    routes.MapRoute(name: "MyRoute", template: "{controller:regex(^H.*)=Home}/" + "{action:regex(^Index$|^About$)=Index}/{id?}");
+            //    routes.MapRoute(name: "MyRoute", template: "{controller=Home}/{action=Index}/{id:range(10,20)?}");
+            //    routes.MapRoute(name: "MyRoute", template: "{controller=Home}/{action=Index}" + "{id:alpha:minlength(6)?}");
+            //    routes.MapRoute(name: "MyRoute", template: "{controller}/{action}/{id?}", defaults: new { controller = "Home", action = "Index" }, constraints: new
+            //    {
+            //        id = new CompositeRouteConstraint(
+            //            new IRouteConstraint[]
+            //            {
+            //                new AlphaRouteConstraint(),
+            //                new MinLengthRouteConstraint(6)
+            //            })
+            //    });
+            //    routes.MapRoute(name: "MyRoute", template: "{controller}/{action}/{id:weekday?}");
+            //    routes.MapRoute(name: "MyRoute", template: "{controller}/{action}/{id?}", defaults: new { controller = "Home", action = "Index" }, constraints: new
+            //    {
+            //        id = new WeekDayConstraint()
+            //    });
+            //    routes.MapRoute(name: "MyRoute", template: "{controller=Home}/{action=Index}/{id:int?}");
+            //    Catchall variable
+            //    routes.MapRoute(name: "MyRoute", template: "{controller=Home}/{action=Index}/{id?}/{*catchall}");
+            //    example route for prefixed Urls
 
-                // route that has controller replaced with another
-                // routes.MapRoute(name: "ShopSchema", template: "Shop/{action}", defaults: new { controller = "Home" });
-                // controller and action replaced
-                // routes.MapRoute(name: "ShopSchema2", template: "Shop/OldAction", defaults: new { controller = "Home", action = "Index" });
+            //    routes.MapRoute("Public/{controller=Home}/{action=Index}");
+            //    url patter that has both static and variable elements
+            //     routes.MapRoute("", "X{controller}/{action});
 
-                // defining custom segment variables
-                // routes.MapRoute(name: "MyRoute", template: "{controller=Home}/{action=Index}/{id=DefaultId}");
+            //     route that has controller replaced with another
+            //     routes.MapRoute(name: "ShopSchema", template: "Shop/{action}", defaults: new { controller = "Home" });
+            //    controller and action replaced
+            //     routes.MapRoute(name: "ShopSchema2", template: "Shop/OldAction", defaults: new { controller = "Home", action = "Index" });
 
-                //specifying optional url segment
-                // routes.MapRoute(name: "MyRoute", template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            //    defining custom segment variables
+            //     routes.MapRoute(name: "MyRoute", template: "{controller=Home}/{action=Index}/{id=DefaultId}");
+
+            //    specifying optional url segment
+            //     routes.MapRoute(name: "MyRoute", template: "{controller=Home}/{action=Index}/{id?}");
+            //});
         }
     }
 }
